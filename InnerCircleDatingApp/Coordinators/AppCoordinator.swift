@@ -6,7 +6,6 @@
 //
 
 import UIKit
-
 class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -25,9 +24,21 @@ class AppCoordinator: Coordinator {
         childCoordinators.append(loginCoordinator)
         loginCoordinator.start()
     }
-    
-    func loginDidComplete(userType: UserType, email: String) {
 
+    func loginDidComplete(userType: UserType, email: String) {
+        switch userType {
+        case .approved:
+            showHome(email: email)
+        case .new:
+            fatalError("Onboarding flow not implemented")
+        }
     }
 
+    func showHome(email: String) {
+        navigationController.viewControllers.removeAll()
+
+        let homeCoordinator = HomeCoordinator(navigationController: navigationController, email: email)
+        childCoordinators.append(homeCoordinator)
+        homeCoordinator.start()
+    }
 }

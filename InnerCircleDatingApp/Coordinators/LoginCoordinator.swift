@@ -12,17 +12,24 @@ class LoginCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     weak var parentCoordinator: AppCoordinator?
 
-    init(navigationController: UINavigationController) {
+    private let viewControllerFactory: ViewControllerFactoryProtocol
+
+    init(
+        navigationController: UINavigationController,
+        viewControllerFactory: ViewControllerFactoryProtocol
+    ) {
         self.navigationController = navigationController
+        self.viewControllerFactory = viewControllerFactory
+    }
+
+    convenience init(navigationController: UINavigationController) {
+        self.init(navigationController: navigationController, viewControllerFactory: ViewControllerFactory())
     }
 
     func start() {
-        let loginVC = LoginViewController(nibName: "LoginViewController", bundle: nil)
-        loginVC.coordinator = self
-        loginVC.authService = AuthenticationService()
+        let loginVC = viewControllerFactory.makeLoginViewController(coordinator: self)
         navigationController.setViewControllers([loginVC], animated: false)
     }
-
 
     func didLogin(userType: UserType, email: String) {
         parentCoordinator?.loginDidComplete(userType: userType, email: email)
