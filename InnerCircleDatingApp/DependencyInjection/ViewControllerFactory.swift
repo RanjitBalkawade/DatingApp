@@ -13,7 +13,7 @@ import UIKit
 @MainActor
 protocol ViewControllerFactoryProtocol {
     func makeLoginViewController(coordinator: LoginCoordinator) -> LoginViewController
-    func makeHomeViewController(email: String) -> HomeViewController
+    func makeHomeViewController(email: String, coordinator: HomeCoordinator) -> HomeViewController
 }
 
 // MARK: - Default View Controller Factory
@@ -38,9 +38,9 @@ final class ViewControllerFactory: ViewControllerFactoryProtocol {
         return viewController
     }
 
-    func makeHomeViewController(email: String) -> HomeViewController {
+    func makeHomeViewController(email: String, coordinator: HomeCoordinator) -> HomeViewController {
         let viewController = HomeViewController()
-        let viewModel = HomeViewModel(email: email)
+        let viewModel = HomeViewModel(email: email, coordinator: coordinator)
         viewController.viewModel = viewModel
         return viewController
     }

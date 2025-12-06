@@ -10,6 +10,7 @@ import UIKit
 class HomeCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
+    weak var parentCoordinator: AppCoordinator?
     let email: String
 
     private let viewControllerFactory: ViewControllerFactoryProtocol
@@ -29,8 +30,11 @@ class HomeCoordinator: Coordinator {
     }
 
     func start() {
-        let homeVC = viewControllerFactory.makeHomeViewController(email: email)
+        let homeVC = viewControllerFactory.makeHomeViewController(email: email, coordinator: self)
         navigationController.setViewControllers([homeVC], animated: true)
     }
-}
 
+    func logout() {
+        parentCoordinator?.logout()
+    }
+}

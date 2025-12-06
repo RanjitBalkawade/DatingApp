@@ -34,6 +34,12 @@ class HomeViewController: UIViewController {
         return button
     }()
 
+    private let logoutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,12 +67,16 @@ class HomeViewController: UIViewController {
 
     private func setupButton() {
         profileButton.applyPrimaryStyle()
+        logoutButton.applySecondaryStyle()
+
+        logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     }
 
     private func setupConstraints() {
         view.addSubview(welcomeLabel)
         view.addSubview(subtitleLabel)
         view.addSubview(profileButton)
+        view.addSubview(logoutButton)
 
         NSLayoutConstraint.activate([
             welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -77,8 +87,14 @@ class HomeViewController: UIViewController {
             subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             subtitleLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: AppTheme.Spacing.sm),
 
+            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -AppTheme.Spacing.xl),
+            logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: AppTheme.Spacing.xl),
+            logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -AppTheme.Spacing.xl),
+            logoutButton.heightAnchor.constraint(equalToConstant: 54),
+
             profileButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            profileButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -AppTheme.Spacing.xl),
+            profileButton.bottomAnchor.constraint(equalTo: logoutButton.topAnchor, constant: -AppTheme.Spacing.md),
             profileButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: AppTheme.Spacing.xl),
             profileButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -AppTheme.Spacing.xl),
             profileButton.heightAnchor.constraint(equalToConstant: 54)
@@ -90,5 +106,10 @@ class HomeViewController: UIViewController {
         welcomeLabel.text = viewModel.welcomeMessage
         subtitleLabel.text = viewModel.subtitleMessage
         profileButton.setTitle(viewModel.profileButtonTitle, for: .normal)
+        logoutButton.setTitle(viewModel.logoutButtonTitle, for: .normal)
+    }
+
+    @objc private func logoutButtonTapped() {
+        viewModel.logout()
     }
 }

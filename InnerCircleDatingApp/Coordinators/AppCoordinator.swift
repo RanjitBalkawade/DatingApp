@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -38,7 +39,13 @@ class AppCoordinator: Coordinator {
         navigationController.viewControllers.removeAll()
 
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, email: email)
+        homeCoordinator.parentCoordinator = self
         childCoordinators.append(homeCoordinator)
         homeCoordinator.start()
+    }
+
+    func logout() {
+        childCoordinators.removeAll()
+        showLogin()
     }
 }
