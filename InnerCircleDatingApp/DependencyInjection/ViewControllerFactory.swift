@@ -7,8 +7,6 @@
 
 import Foundation
 
-import UIKit
-
 // MARK: - View Controller Factory Protocol
 @MainActor
 protocol ViewControllerFactoryProtocol {
@@ -40,7 +38,11 @@ final class ViewControllerFactory: ViewControllerFactoryProtocol {
 
     func makeHomeViewController(email: String, coordinator: HomeCoordinator) -> HomeViewController {
         let viewController = HomeViewController()
-        let viewModel = HomeViewModel(email: email, coordinator: coordinator)
+        let viewModel = HomeViewModel(
+            email: email,
+            userService: dependencyContainer.userService,
+            coordinator: coordinator
+        )
         viewController.viewModel = viewModel
         return viewController
     }

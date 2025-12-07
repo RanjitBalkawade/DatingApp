@@ -10,6 +10,7 @@ import Foundation
 // MARK: - Service Factory Protocol
 protocol ServiceFactoryProtocol {
     func makeAuthenticationService() -> AuthenticationServiceProtocol
+    func makeUserService() -> UserServiceProtocol
 }
 
 // MARK: - Default Service Factory
@@ -20,8 +21,13 @@ final class ServiceFactory: ServiceFactoryProtocol {
     private init() {}
 
     // MARK: - Service Creation
+
     func makeAuthenticationService() -> AuthenticationServiceProtocol {
         return AuthenticationService()
+    }
+
+    func makeUserService() -> UserServiceProtocol {
+        return UserService()
     }
 }
 
@@ -37,8 +43,13 @@ final class DependencyContainer {
     }
 
     // MARK: - Service Accessors
+
     lazy var authenticationService: AuthenticationServiceProtocol = {
         return serviceFactory.makeAuthenticationService()
+    }()
+
+    lazy var userService: UserServiceProtocol = {
+        return serviceFactory.makeUserService()
     }()
 
     // MARK: - Testing Support

@@ -5,19 +5,13 @@
 //  Created by Ranjeet Balkawade on 06/12/25.
 //
 
-import Foundation
-
 // MARK: - Home View Model Protocol
 @MainActor
-protocol HomeViewModelProtocol {
+protocol HomeViewModelProtocol: AnyObject {
     var coordinator: HomeCoordinator? { get set }
-    var email: String { get }
-    var welcomeMessage: String { get }
-    var subtitleMessage: String { get }
-    var cardTitle: String { get }
-    var profileButtonTitle: String { get }
-    var logoutButtonTitle: String { get }
+    var onStateChange: ((ViewState<User>) -> Void)? { get set }
 
+    func loadHomeData()
     func logout()
 }
 
@@ -27,32 +21,40 @@ final class HomeViewModel: HomeViewModelProtocol {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
-    let email: String
+    private let email: String
+    private let userService: UserServiceProtocol
 
-    var welcomeMessage: String {
-        return "Hello! 👋\n\(email)"
-    }
-
-    var subtitleMessage: String {
-        return "Welcome to InnerCircle"
-    }
-
-    var cardTitle: String {
-        return "Start Discovering Matches"
-    }
-
-    var profileButtonTitle: String {
-        return "View Profile"
-    }
-
-    var logoutButtonTitle: String {
-        return "Logout"
+    var onStateChange: ((ViewState<User>) -> Void)?
+    private var viewState: ViewState<User> = .idle {
+        didSet {
+            onStateChange?(viewState)
+        }
     }
 
     // MARK: - Initialization
-    init(email: String, coordinator: HomeCoordinator? = nil) {
+    init(
+        email: String,
+        userService: UserServiceProtocol,
+        coordinator: HomeCoordinator? = nil
+    ) {
         self.email = email
+        self.userService = userService
         self.coordinator = coordinator
+    }
+
+    // MARK: - Data Loading
+    func loadHomeData() {
+        Task {
+            viewState = .loading
+
+            do {
+                let userDTO = try await userService.fetchUserProfile(for: email)
+                let user = userDTO.toUser() // Map DTO to domain model
+                viewState = .success(user)
+            } catch {
+                viewState = .error(error)
+            }
+        }
     }
 
     // MARK: - Actions

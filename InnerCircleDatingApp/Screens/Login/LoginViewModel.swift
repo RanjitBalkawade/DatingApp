@@ -9,9 +9,10 @@ import Foundation
 
 // MARK: - Login View Model Protocol
 @MainActor
-protocol LoginViewModelProtocol {
+protocol LoginViewModelProtocol: AnyObject {
     var coordinator: LoginCoordinator? { get set }
-    func login(email: String?, password: String?) async -> Result<(UserType, String), LoginError>
+    var onStateChange: ((ViewState<(UserType, String)>) -> Void)? { get set }
+    func login(email: String?, password: String?) async
     func validateEmail(_ email: String?) -> Bool
     func validatePassword(_ password: String?) -> Bool
 }
@@ -42,6 +43,13 @@ final class LoginViewModel: LoginViewModelProtocol {
     weak var coordinator: LoginCoordinator?
     private let authService: AuthenticationServiceProtocol
 
+    var onStateChange: ((ViewState<(UserType, String)>) -> Void)?
+    private var viewState: ViewState<(UserType, String)> = .idle {
+        didSet {
+            onStateChange?(viewState)
+        }
+    }
+
     // MARK: - Initialization
     init(
         authService: AuthenticationServiceProtocol,
@@ -52,22 +60,25 @@ final class LoginViewModel: LoginViewModelProtocol {
     }
 
     // MARK: - Public Methods
-    func login(email: String?, password: String?) async -> Result<(UserType, String), LoginError> {
+    func login(email: String?, password: String?) async {
         guard validateEmail(email), let validEmail = email else {
-            return .failure(.emptyEmail)
+            viewState = .error(LoginError.emptyEmail)
+            return
         }
 
         guard validatePassword(password) else {
-            return .failure(.emptyPassword)
+            viewState = .error(LoginError.emptyPassword)
+            return
         }
+
+        viewState = .loading
 
         do {
             let userType = try await authService.login(email: validEmail, password: password!)
-            // Coordinator call now guaranteed to be on main thread due to @MainActor
+            viewState = .success((userType, validEmail))
             coordinator?.didLogin(userType: userType, email: validEmail)
-            return .success((userType, validEmail))
         } catch {
-            return .failure(.authenticationFailed(error))
+            viewState = .error(LoginError.authenticationFailed(error))
         }
     }
 
