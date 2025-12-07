@@ -31,8 +31,21 @@ class AppCoordinator: Coordinator {
         case .approved:
             showHome(email: email)
         case .new:
-            fatalError("Onboarding flow not implemented")
+            showOnboarding(email: email)
         }
+    }
+    
+    func showOnboarding(email: String) {
+        let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController, email: email)
+        onboardingCoordinator.parentCoordinator = self
+        childCoordinators.append(onboardingCoordinator)
+        onboardingCoordinator.start()
+    }
+
+    func onboardingDidCancel() {
+        childCoordinators.removeAll()
+        navigationController.popToRootViewController(animated: true)
+        showLogin()
     }
 
     func showHome(email: String) {
