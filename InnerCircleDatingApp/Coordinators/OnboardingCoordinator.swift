@@ -29,6 +29,10 @@ class OnboardingCoordinator: Coordinator {
         navigationController.pushViewController(hostingController, animated: true)
     }
 
+    func didCompleteOnboarding(user: User) {
+        parentCoordinator?.onboardingDidComplete(user: user)
+    }
+
     func didCancelOnboarding() {
         parentCoordinator?.onboardingDidCancel()
     }

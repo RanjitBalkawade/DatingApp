@@ -42,6 +42,10 @@ class AppCoordinator: Coordinator {
         onboardingCoordinator.start()
     }
 
+    func onboardingDidComplete(user: User) {
+        showHome(email: user.email)
+    }
+
     func onboardingDidCancel() {
         childCoordinators.removeAll()
         navigationController.popToRootViewController(animated: true)

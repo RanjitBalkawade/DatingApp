@@ -51,9 +51,20 @@ struct OnboardingContainerView: View {
                 BirthdayView(viewModel: viewModel)
             case .height:
                 HeightView(viewModel: viewModel)
+            case .children:
+                ChildrenView(viewModel: viewModel)
+            case .datingIntentions:
+                DatingIntentionsView(viewModel: viewModel)
+            case .gender:
+                GenderView(viewModel: viewModel)
+            case .photos:
+                PhotoSelectionView(viewModel: viewModel)
+            case .lifestyles:
+                LifestylesView(viewModel: viewModel)
+            case .confirmation:
+                ConfirmationView(viewModel: viewModel)
             }
         }
         .navigationBarHidden(true)
     }
 }
-

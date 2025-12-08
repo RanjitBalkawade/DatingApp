@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 enum OnboardingStep: Int, CaseIterable {
     case intro = 0
@@ -14,6 +15,12 @@ enum OnboardingStep: Int, CaseIterable {
     case job
     case birthday
     case height
+    case children
+    case datingIntentions
+    case gender
+    case photos
+    case lifestyles
+    case confirmation
 
     var title: String {
         switch self {
@@ -23,6 +30,12 @@ enum OnboardingStep: Int, CaseIterable {
         case .job: return "Your Job"
         case .birthday: return "Birthday"
         case .height: return "Height"
+        case .children: return "Children"
+        case .datingIntentions: return "Intentions"
+        case .gender: return "Gender"
+        case .photos: return "Photos"
+        case .lifestyles: return "Lifestyles"
+        case .confirmation: return "Confirm"
         }
     }
 }
@@ -34,10 +47,18 @@ class OnboardingViewModel: ObservableObject {
     @ObservedObject var user: User
 
     weak var coordinator: OnboardingCoordinator?
+    private var cancellables = Set<AnyCancellable>()
 
     init(email: String, coordinator: OnboardingCoordinator) {
         self.user = User(email: email)
         self.coordinator = coordinator
+
+        // Forward User's objectWillChange to ViewModel's objectWillChange
+        // This ensures views observing ViewModel update when User properties change
+        user.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
+        .store(in: &cancellables)
     }
 
     // MARK: - User Update Methods
@@ -55,6 +76,26 @@ class OnboardingViewModel: ObservableObject {
 
     func updateHeight(_ height: Int?) {
         user.height = height
+    }
+
+    func updateHasChildren(_ hasChildren: Bool?) {
+        user.hasChildren = hasChildren
+    }
+
+    func updateDatingIntentions(_ intentions: String?) {
+        user.datingIntentions = intentions
+    }
+
+    func updateGender(_ gender: String?) {
+        user.gender = gender
+    }
+
+    func updatePhotos(_ photos: [String]) {
+        user.photos = photos
+    }
+
+    func updateLifestyles(_ lifestyles: [LifestyleItem]) {
+        user.lifestyles = lifestyles
     }
 
     func updateSocialConnected(_ connected: Bool?) {
@@ -75,7 +116,22 @@ class OnboardingViewModel: ObservableObject {
             currentStep = OnboardingStep.allCases[currentIndex - 1]
         }
     }
-    
+
+    func completeOnboarding() {
+        Task {
+            submissionState = .loading
+
+            // Simulate API call to submit profile
+            do {
+                try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+                submissionState = .success(user)
+                coordinator?.didCompleteOnboarding(user: user)
+            } catch {
+                submissionState = .error(error)
+            }
+        }
+    }
+
     func cancelOnboarding() {
         coordinator?.didCancelOnboarding()
     }
