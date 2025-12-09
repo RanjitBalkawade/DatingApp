@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 protocol LifestyleDetailCellDelegate: AnyObject {
     func lifestyleDetailCell(_ cell: LifestyleDetailCell, didUpdateDetail detail: String, forLifestyle lifestyle: String)
 }

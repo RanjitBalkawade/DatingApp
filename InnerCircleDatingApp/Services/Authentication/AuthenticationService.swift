@@ -7,7 +7,7 @@
 
 import Foundation
 
-class AuthenticationService: AuthenticationServiceProtocol {
+final class AuthenticationService: AuthenticationServiceProtocol {
     init() {}
 
     func login(email: String, password: String) async throws -> UserType {

@@ -41,7 +41,7 @@ enum OnboardingStep: Int, CaseIterable {
 }
 
 @MainActor
-class OnboardingViewModel: ObservableObject {
+final class OnboardingViewModel: ObservableObject {
     @Published var currentStep: OnboardingStep = .intro
     @Published var submissionState: ViewState<User> = .idle
     @ObservedObject var user: User

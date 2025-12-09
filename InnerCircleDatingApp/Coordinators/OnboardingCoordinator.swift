@@ -14,7 +14,7 @@ protocol OnboardingCoordinatorActions: AnyObject {
     func didCancelOnboarding()
 }
 
-class OnboardingCoordinator: Coordinator {
+final class OnboardingCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     let email: String

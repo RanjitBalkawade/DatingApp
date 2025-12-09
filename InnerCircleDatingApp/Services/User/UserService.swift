@@ -7,7 +7,7 @@
 
 import Foundation
 
-class UserService: UserServiceProtocol {
+final class UserService: UserServiceProtocol {
 
     init() {}
 

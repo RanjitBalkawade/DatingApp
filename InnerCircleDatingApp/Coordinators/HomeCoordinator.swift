@@ -12,7 +12,7 @@ protocol HomeCoordinatorActions: AnyObject {
     func didRequestLogout()
 }
 
-class HomeCoordinator: Coordinator {
+final class HomeCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     let email: String

@@ -8,7 +8,7 @@
 import UIKit
 
 // MARK: - App Coordinator
-class AppCoordinator: Coordinator {
+final class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
 

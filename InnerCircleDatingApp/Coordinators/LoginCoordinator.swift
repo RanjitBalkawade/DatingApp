@@ -12,7 +12,7 @@ protocol LoginCoordinatorActions: AnyObject {
     func didCompleteLogin(userType: UserType, email: String)
 }
 
-class LoginCoordinator: Coordinator {
+final class LoginCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
 
