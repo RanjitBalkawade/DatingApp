@@ -70,3 +70,6 @@ struct FeatureRow: View {
     }
 }
 
+#Preview {
+    IntroView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

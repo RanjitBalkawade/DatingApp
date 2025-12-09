@@ -68,3 +68,7 @@ struct OnboardingContainerView: View {
         .navigationBarHidden(true)
     }
 }
+
+#Preview {
+    OnboardingContainerView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

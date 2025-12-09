@@ -59,3 +59,7 @@ struct DatingIntentionsView: View {
     }
 }
 
+
+#Preview {
+    DatingIntentionsView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

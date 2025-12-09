@@ -49,7 +49,7 @@ class OnboardingViewModel: ObservableObject {
     weak var coordinator: OnboardingCoordinator?
     private var cancellables = Set<AnyCancellable>()
 
-    init(email: String, coordinator: OnboardingCoordinator) {
+    init(email: String, coordinator: OnboardingCoordinator? = nil) {
         self.user = User(email: email)
         self.coordinator = coordinator
 

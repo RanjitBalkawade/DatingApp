@@ -68,3 +68,6 @@ struct JobView: View {
     }
 }
 
+#Preview {
+    JobView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

@@ -75,3 +75,6 @@ struct ChildrenView: View {
     }
 }
 
+#Preview {
+    ChildrenView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

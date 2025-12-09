@@ -126,3 +126,6 @@ struct LifestylesView: View {
     }
 }
 
+#Preview {
+    LifestylesView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

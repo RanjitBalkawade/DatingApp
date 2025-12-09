@@ -70,3 +70,6 @@ struct PhotoSelectionView: View {
     }
 }
 
+#Preview {
+    PhotoSelectionView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

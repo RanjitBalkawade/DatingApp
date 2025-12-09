@@ -66,3 +66,7 @@ struct HeightView: View {
         }
     }
 }
+
+#Preview {
+    HeightView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

@@ -58,3 +58,6 @@ struct GenderView: View {
     }
 }
 
+#Preview {
+    GenderView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

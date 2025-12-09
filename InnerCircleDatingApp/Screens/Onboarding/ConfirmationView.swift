@@ -172,3 +172,6 @@ struct InfoCard: View {
     }
 }
 
+#Preview {
+    ConfirmationView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}

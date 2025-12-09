@@ -63,3 +63,7 @@ struct BirthdayView: View {
         }
     }
 }
+
+#Preview {
+    BirthdayView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
+}
