@@ -7,17 +7,15 @@
 
 import Foundation
 
-// MARK: - Login View Model Protocol
 @MainActor
 protocol LoginViewModelProtocol: AnyObject {
-    var coordinator: LoginCoordinator? { get set }
+    var coordinator: LoginCoordinatorActions? { get set }
     var onStateChange: ((ViewState<(UserType, String)>) -> Void)? { get set }
     func login(email: String?, password: String?) async
     func validateEmail(_ email: String?) -> Bool
     func validatePassword(_ password: String?) -> Bool
 }
 
-// MARK: - Login Error
 enum LoginError: LocalizedError {
     case emptyEmail
     case emptyPassword
@@ -35,12 +33,11 @@ enum LoginError: LocalizedError {
     }
 }
 
-// MARK: - Login View Model
 @MainActor
 final class LoginViewModel: LoginViewModelProtocol {
 
     // MARK: - Properties
-    weak var coordinator: LoginCoordinator?
+    weak var coordinator: LoginCoordinatorActions?
     private let authService: AuthenticationServiceProtocol
 
     var onStateChange: ((ViewState<(UserType, String)>) -> Void)?
@@ -53,7 +50,7 @@ final class LoginViewModel: LoginViewModelProtocol {
     // MARK: - Initialization
     init(
         authService: AuthenticationServiceProtocol,
-        coordinator: LoginCoordinator? = nil
+        coordinator: LoginCoordinatorActions? = nil
     ) {
         self.authService = authService
         self.coordinator = coordinator
@@ -76,7 +73,7 @@ final class LoginViewModel: LoginViewModelProtocol {
         do {
             let userType = try await authService.login(email: validEmail, password: password!)
             viewState = .success((userType, validEmail))
-            coordinator?.didLogin(userType: userType, email: validEmail)
+            coordinator?.didCompleteLogin(userType: userType, email: validEmail)
         } catch {
             viewState = .error(LoginError.authenticationFailed(error))
         }

@@ -5,22 +5,23 @@
 //  Created by Ranjeet Balkawade on 06/12/25.
 //
 
-// MARK: - Home View Model Protocol
+
+import Foundation
+
 @MainActor
 protocol HomeViewModelProtocol: AnyObject {
-    var coordinator: HomeCoordinator? { get set }
+    var coordinator: HomeCoordinatorActions? { get set }
     var onStateChange: ((ViewState<User>) -> Void)? { get set }
 
     func loadHomeData()
     func logout()
 }
 
-// MARK: - Home View Model
 @MainActor
 final class HomeViewModel: HomeViewModelProtocol {
 
     // MARK: - Properties
-    weak var coordinator: HomeCoordinator?
+    weak var coordinator: HomeCoordinatorActions?
     private let email: String
     private let userService: UserServiceProtocol
 
@@ -35,7 +36,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     init(
         email: String,
         userService: UserServiceProtocol,
-        coordinator: HomeCoordinator? = nil
+        coordinator: HomeCoordinatorActions? = nil
     ) {
         self.email = email
         self.userService = userService
@@ -59,6 +60,6 @@ final class HomeViewModel: HomeViewModelProtocol {
 
     // MARK: - Actions
     func logout() {
-        coordinator?.logout()
+        coordinator?.didRequestLogout()
     }
 }

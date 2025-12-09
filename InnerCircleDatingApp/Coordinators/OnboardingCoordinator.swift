@@ -8,11 +8,19 @@
 import UIKit
 import SwiftUI
 
+// MARK: - Onboarding Coordinator Actions Protocol
+protocol OnboardingCoordinatorActions: AnyObject {
+    func didCompleteOnboarding(user: User)
+    func didCancelOnboarding()
+}
+
 class OnboardingCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
-    weak var parentCoordinator: AppCoordinator?
     let email: String
+
+    var onFinish: ((AppDestination) -> Void)?
+    var onCancel: (() -> Void)?
 
     init(navigationController: UINavigationController, email: String) {
         self.navigationController = navigationController
@@ -20,6 +28,11 @@ class OnboardingCoordinator: Coordinator {
     }
 
     func start() {
+        showOnboardingFlow()
+    }
+
+    // MARK: - Private Methods
+    private func showOnboardingFlow() {
         let viewModel = OnboardingViewModel(email: email, coordinator: self)
         let onboardingView = OnboardingContainerView(viewModel: viewModel)
 
@@ -28,13 +41,15 @@ class OnboardingCoordinator: Coordinator {
 
         navigationController.pushViewController(hostingController, animated: true)
     }
+}
 
+// MARK: - Onboarding Coordinator Actions
+extension OnboardingCoordinator: OnboardingCoordinatorActions {
     func didCompleteOnboarding(user: User) {
-        parentCoordinator?.onboardingDidComplete(user: user)
+        onFinish?(.home(email: user.email))
     }
 
     func didCancelOnboarding() {
-        parentCoordinator?.onboardingDidCancel()
+        onCancel?()
     }
 }
-

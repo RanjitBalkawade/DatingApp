@@ -7,11 +7,17 @@
 
 import UIKit
 
+// MARK: - Home Coordinator Actions Protocol
+protocol HomeCoordinatorActions: AnyObject {
+    func didRequestLogout()
+}
+
 class HomeCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
-    weak var parentCoordinator: AppCoordinator?
     let email: String
+
+    var onFinish: ((AppDestination) -> Void)?
 
     private let viewControllerFactory: ViewControllerFactoryProtocol
 
@@ -30,11 +36,19 @@ class HomeCoordinator: Coordinator {
     }
 
     func start() {
+        showHomeScreen()
+    }
+
+    // MARK: - Private Methods
+    private func showHomeScreen() {
         let homeVC = viewControllerFactory.makeHomeViewController(email: email, coordinator: self)
         navigationController.setViewControllers([homeVC], animated: true)
     }
+}
 
-    func logout() {
-        parentCoordinator?.logout()
+// MARK: - Home Coordinator Actions
+extension HomeCoordinator: HomeCoordinatorActions {
+    func didRequestLogout() {
+        onFinish?(.login)
     }
 }

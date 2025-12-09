@@ -7,10 +7,16 @@
 
 import UIKit
 
+// MARK: - Login Coordinator Actions Protocol
+protocol LoginCoordinatorActions: AnyObject {
+    func didCompleteLogin(userType: UserType, email: String)
+}
+
 class LoginCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
-    weak var parentCoordinator: AppCoordinator?
+
+    var onFinish: ((AppDestination) -> Void)?
 
     private let viewControllerFactory: ViewControllerFactoryProtocol
 
@@ -27,11 +33,23 @@ class LoginCoordinator: Coordinator {
     }
 
     func start() {
+        showLoginScreen()
+    }
+
+    // MARK: - Private Methods
+    private func showLoginScreen() {
         let loginVC = viewControllerFactory.makeLoginViewController(coordinator: self)
         navigationController.setViewControllers([loginVC], animated: false)
     }
+}
 
-    func didLogin(userType: UserType, email: String) {
-        parentCoordinator?.loginDidComplete(userType: userType, email: email)
+// MARK: - Login Coordinator Actions
+extension LoginCoordinator: LoginCoordinatorActions {
+    func didCompleteLogin(userType: UserType, email: String) {
+        let destination: AppDestination = userType == .approved
+            ? .home(email: email)
+            : .onboarding(email: email)
+
+        onFinish?(destination)
     }
 }

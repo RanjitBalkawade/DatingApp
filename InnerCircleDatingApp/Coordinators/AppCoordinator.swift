@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - App Coordinator
 class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
@@ -16,53 +17,67 @@ class AppCoordinator: Coordinator {
     }
 
     func start() {
-        showLogin()
+        navigate(to: .login)
     }
 
-    func showLogin() {
+    // MARK: - Generic Navigation
+    private func navigate(to destination: AppDestination) {
+        switch destination {
+        case .login:
+            showLogin()
+        case .onboarding(let email):
+            showOnboarding(email: email)
+        case .home(let email):
+            showHome(email: email)
+        }
+    }
+
+    // MARK: - Private Navigation Methods
+    private func showLogin() {
         let loginCoordinator = LoginCoordinator(navigationController: navigationController)
-        loginCoordinator.parentCoordinator = self
-        childCoordinators.append(loginCoordinator)
+        addChildCoordinator(loginCoordinator)
+
+        loginCoordinator.onFinish = { [weak self, weak loginCoordinator] destination in
+            guard let self = self, let loginCoordinator = loginCoordinator else { return }
+            self.removeChildCoordinator(loginCoordinator)
+            self.navigate(to: destination)
+        }
+
         loginCoordinator.start()
     }
 
-    func loginDidComplete(userType: UserType, email: String) {
-        switch userType {
-        case .approved:
-            showHome(email: email)
-        case .new:
-            showOnboarding(email: email)
-        }
-    }
-    
-    func showOnboarding(email: String) {
+    private func showOnboarding(email: String) {
         let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController, email: email)
-        onboardingCoordinator.parentCoordinator = self
-        childCoordinators.append(onboardingCoordinator)
+        addChildCoordinator(onboardingCoordinator)
+
+        onboardingCoordinator.onFinish = { [weak self, weak onboardingCoordinator] destination in
+            guard let self = self, let onboardingCoordinator = onboardingCoordinator else { return }
+            self.removeChildCoordinator(onboardingCoordinator)
+            self.navigate(to: destination)
+        }
+
+        onboardingCoordinator.onCancel = { [weak self] in
+            guard let self = self else { return }
+            self.removeAllChildCoordinators()
+            self.navigationController.popToRootViewController(animated: true)
+            self.navigate(to: .login)
+        }
+
         onboardingCoordinator.start()
     }
 
-    func onboardingDidComplete(user: User) {
-        showHome(email: user.email)
-    }
-
-    func onboardingDidCancel() {
-        childCoordinators.removeAll()
-        navigationController.popToRootViewController(animated: true)
-        showLogin()
-    }
-
-    func showHome(email: String) {
+    private func showHome(email: String) {
         navigationController.viewControllers.removeAll()
 
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, email: email)
-        homeCoordinator.parentCoordinator = self
-        childCoordinators.append(homeCoordinator)
-        homeCoordinator.start()
-    }
+        addChildCoordinator(homeCoordinator)
 
-    func logout() {
-        childCoordinators.removeAll()
-        showLogin()
+        homeCoordinator.onFinish = { [weak self] destination in
+            guard let self = self else { return }
+            self.removeAllChildCoordinators()
+            self.navigate(to: destination)
+        }
+
+        homeCoordinator.start()
     }
 }
