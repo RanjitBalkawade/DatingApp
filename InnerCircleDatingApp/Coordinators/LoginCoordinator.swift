@@ -28,10 +28,6 @@ class LoginCoordinator: Coordinator {
         self.viewControllerFactory = viewControllerFactory
     }
 
-    convenience init(navigationController: UINavigationController) {
-        self.init(navigationController: navigationController, viewControllerFactory: ViewControllerFactory())
-    }
-
     func start() {
         showLoginScreen()
     }

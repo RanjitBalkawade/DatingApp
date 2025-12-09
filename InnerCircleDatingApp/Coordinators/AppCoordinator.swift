@@ -12,8 +12,14 @@ class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
 
-    init(navigationController: UINavigationController) {
+    private let viewControllerFactory: ViewControllerFactoryProtocol
+
+    init(
+        navigationController: UINavigationController,
+        viewControllerFactory: ViewControllerFactoryProtocol
+    ) {
         self.navigationController = navigationController
+        self.viewControllerFactory = viewControllerFactory
     }
 
     func start() {
@@ -34,7 +40,10 @@ class AppCoordinator: Coordinator {
 
     // MARK: - Private Navigation Methods
     private func showLogin() {
-        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
+        let loginCoordinator = LoginCoordinator(
+            navigationController: navigationController,
+            viewControllerFactory: viewControllerFactory
+        )
         addChildCoordinator(loginCoordinator)
 
         loginCoordinator.onFinish = { [weak self, weak loginCoordinator] destination in
@@ -69,7 +78,11 @@ class AppCoordinator: Coordinator {
     private func showHome(email: String) {
         navigationController.viewControllers.removeAll()
 
-        let homeCoordinator = HomeCoordinator(navigationController: navigationController, email: email)
+        let homeCoordinator = HomeCoordinator(
+            navigationController: navigationController,
+            email: email,
+            viewControllerFactory: viewControllerFactory
+        )
         addChildCoordinator(homeCoordinator)
 
         homeCoordinator.onFinish = { [weak self] destination in

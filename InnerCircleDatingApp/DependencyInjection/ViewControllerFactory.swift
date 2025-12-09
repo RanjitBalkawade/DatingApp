@@ -24,7 +24,7 @@ final class ViewControllerFactory: ViewControllerFactoryProtocol {
 
     private let dependencyContainer: DependencyContainer
 
-    init(dependencyContainer: DependencyContainer = .shared) {
+    init(dependencyContainer: DependencyContainer) {
         self.dependencyContainer = dependencyContainer
     }
 

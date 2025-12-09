@@ -31,10 +31,6 @@ class HomeCoordinator: Coordinator {
         self.viewControllerFactory = viewControllerFactory
     }
 
-    convenience init(navigationController: UINavigationController, email: String) {
-        self.init(navigationController: navigationController, email: email, viewControllerFactory: ViewControllerFactory())
-    }
-
     func start() {
         showHomeScreen()
     }

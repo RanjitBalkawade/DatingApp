@@ -13,7 +13,7 @@ class UserService: UserServiceProtocol {
 
     func fetchUserProfile(for email: String) async throws -> UserDTO {
         // Simulate network delay
-        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 second
 
         return UserDTO(
             email: email,

@@ -5,6 +5,7 @@
 //  Created by Ranjeet Balkawade on 06/12/25.
 //
 
+
 import Foundation
 
 // MARK: - Service Factory Protocol
@@ -16,9 +17,7 @@ protocol ServiceFactoryProtocol {
 // MARK: - Default Service Factory
 final class ServiceFactory: ServiceFactoryProtocol {
 
-    static let shared = ServiceFactory()
-
-    private init() {}
+    init() {}
 
     // MARK: - Service Creation
 
@@ -34,11 +33,10 @@ final class ServiceFactory: ServiceFactoryProtocol {
 // MARK: - Dependency Container
 final class DependencyContainer {
 
-    static let shared = DependencyContainer()
-
+    // Service Factory
     let serviceFactory: ServiceFactoryProtocol
 
-    private init(serviceFactory: ServiceFactoryProtocol = ServiceFactory.shared) {
+    init(serviceFactory: ServiceFactoryProtocol) {
         self.serviceFactory = serviceFactory
     }
 
@@ -51,9 +49,4 @@ final class DependencyContainer {
     lazy var userService: UserServiceProtocol = {
         return serviceFactory.makeUserService()
     }()
-
-    // MARK: - Testing Support
-    static func makeForTesting(serviceFactory: ServiceFactoryProtocol) -> DependencyContainer {
-        return DependencyContainer(serviceFactory: serviceFactory)
-    }
 }

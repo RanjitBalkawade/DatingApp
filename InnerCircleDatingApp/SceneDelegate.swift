@@ -12,8 +12,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    // MARK: - Composition Root
 
+    private lazy var serviceFactory: ServiceFactoryProtocol = {
+        return ServiceFactory()
+    }()
+
+    private lazy var dependencyContainer: DependencyContainer = {
+        return DependencyContainer(serviceFactory: serviceFactory)
+    }()
+
+    private lazy var viewControllerFactory: ViewControllerFactoryProtocol = {
+        return ViewControllerFactory(dependencyContainer: dependencyContainer)
+    }()
+
+    // MARK: - Scene Lifecycle
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        
         guard let windowScene = (scene as? UIWindowScene) else {
             return
         }
@@ -24,7 +40,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
 
-        appCoordinator = AppCoordinator(navigationController: navigationController)
+        appCoordinator = AppCoordinator(
+            navigationController: navigationController,
+            viewControllerFactory: viewControllerFactory
+        )
 
         appCoordinator?.start()
 
