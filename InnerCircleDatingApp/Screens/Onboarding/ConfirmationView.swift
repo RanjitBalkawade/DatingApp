@@ -127,7 +127,7 @@ struct ConfirmationView: View {
                         .tint(AppTheme.Colors.primarySwiftUI)
                     Text("Creating your profile...")
                         .font(AppTheme.Fonts.bodySwiftUI)
-                        .foregroundColor(.white)
+                        .foregroundColor(AppTheme.Colors.primarySwiftUI)
                 }
                 .padding(40)
                 .background(Color.white)
