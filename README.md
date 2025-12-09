@@ -14,6 +14,10 @@ iOS dating app demonstrating UIKit and SwiftUI integration with clean architecur
 - Any other email → Aproved user (goes directly to Home)
 - Password can be anything
 
+## Future Enhancements
+- Unit testing is not done considering scope and time limit of the assignment
+
+
 ## Project Structure
 
 The app follows **MVVM-C** (Model-View-ViewModel-Coordinator) pattern:
