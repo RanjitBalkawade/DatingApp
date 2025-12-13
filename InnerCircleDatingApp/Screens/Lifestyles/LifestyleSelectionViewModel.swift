@@ -7,24 +7,15 @@
 
 import Foundation
 
-// MARK: - Lifestyle Selection View Model Protocol
-@MainActor
-protocol LifestyleSelectionViewModelProtocol {
-    var availableLifestyles: [String] { get }
-    var selectedLifestyles: [LifestyleItem] { get set }
-
-    func toggleLifestyle(_ name: String)
-    func isSelected(_ name: String) -> Bool
-    func getSelectedLifestyles() -> [LifestyleItem]
-    func loadSelectedLifestyles(_ lifestyles: [LifestyleItem])
-}
-
 // MARK: - Lifestyle Selection View Model
+@objc
 @MainActor
-final class LifestyleSelectionViewModel: LifestyleSelectionViewModelProtocol {
+class LifestyleSelectionViewModel: NSObject {
 
     // MARK: - Properties
-    let availableLifestyles: [String] = [
+
+    /// Available lifestyle options
+    @objc let availableLifestyles: [String] = [
         "Yoga",
         "Fitness",
         "Travel",
@@ -39,27 +30,45 @@ final class LifestyleSelectionViewModel: LifestyleSelectionViewModelProtocol {
         "Movies"
     ]
 
-    var selectedLifestyles: [LifestyleItem] = []
+    /// Internal storage as dictionaries for Objective-C compatibility
+    private var selectedLifestyleDicts: [[String: Any]] = []
 
-    // MARK: - Public Methods
-    func toggleLifestyle(_ name: String) {
-        if let index = selectedLifestyles.firstIndex(where: { $0.name == name }) {
-            selectedLifestyles.remove(at: index)
+    // MARK: - Initialization
+
+    @objc override init() {
+        super.init()
+    }
+
+    // MARK: - Public Methods (Objective-C Compatible)
+
+    /// Load selected lifestyles from dictionaries
+    @objc func loadSelectedLifestyles(_ lifestyles: [[String: Any]]) {
+        self.selectedLifestyleDicts = lifestyles
+    }
+
+    /// Toggle selection of a lifestyle by name
+    @objc func toggleLifestyle(_ name: String) {
+        if let index = selectedLifestyleDicts.firstIndex(where: {
+            ($0["name"] as? String) == name
+        }) {
+            selectedLifestyleDicts.remove(at: index)
         } else {
-            selectedLifestyles.append(LifestyleItem(name: name, detail: nil))
+            selectedLifestyleDicts.append([
+                "name": name,
+                "detail": NSNull()
+            ])
         }
     }
 
-    func isSelected(_ name: String) -> Bool {
-        return selectedLifestyles.contains(where: { $0.name == name })
+    /// Check if a lifestyle is currently selected
+    @objc func isSelected(_ name: String) -> Bool {
+        return selectedLifestyleDicts.contains(where: {
+            ($0["name"] as? String) == name
+        })
     }
 
-    func getSelectedLifestyles() -> [LifestyleItem] {
-        return selectedLifestyles
-    }
-
-    func loadSelectedLifestyles(_ lifestyles: [LifestyleItem]) {
-        self.selectedLifestyles = lifestyles
+    /// Get all selected lifestyles as dictionaries
+    @objc func getSelectedLifestyles() -> [[String: Any]] {
+        return selectedLifestyleDicts
     }
 }
-

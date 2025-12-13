@@ -6,11 +6,11 @@
 //
 
 #import "LifestyleSelectionViewController.h"
+#import "InnerCircleDatingApp-Swift.h"
 
 @interface LifestyleSelectionViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSArray<NSString *> *availableLifestyles;
-@property (nonatomic, strong) NSMutableSet<NSString *> *selectedItems;
+@property (nonatomic, strong) LifestyleSelectionViewModel *viewModel;
 @end
 
 @implementation LifestyleSelectionViewController
@@ -20,30 +20,10 @@
 
     self.view.backgroundColor = [UIColor systemBackgroundColor];
 
-    self.availableLifestyles = @[
-        @"Yoga",
-        @"Fitness",
-        @"Travel",
-        @"Cooking",
-        @"Reading",
-        @"Music",
-        @"Art",
-        @"Photography",
-        @"Gaming",
-        @"Hiking",
-        @"Dancing",
-        @"Movies"
-    ];
-
-    self.selectedItems = [NSMutableSet set];
+    self.viewModel = [[LifestyleSelectionViewModel alloc] init];
 
     if (self.selectedLifestyles) {
-        for (NSDictionary *lifestyle in self.selectedLifestyles) {
-            NSString *name = lifestyle[@"name"];
-            if (name) {
-                [self.selectedItems addObject:name];
-            }
-        }
+        [self.viewModel loadSelectedLifestyles:self.selectedLifestyles];
     }
 
     [self setupTableView];
@@ -61,16 +41,16 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.availableLifestyles.count;
+    return self.viewModel.availableLifestyles.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LifestyleCell" forIndexPath:indexPath];
 
-    NSString *lifestyle = self.availableLifestyles[indexPath.row];
+    NSString *lifestyle = self.viewModel.availableLifestyles[indexPath.row];
     cell.textLabel.text = lifestyle;
 
-    if ([self.selectedItems containsObject:lifestyle]) {
+    if ([self.viewModel isSelected:lifestyle]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -84,13 +64,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    NSString *lifestyle = self.availableLifestyles[indexPath.row];
+    NSString *lifestyle = self.viewModel.availableLifestyles[indexPath.row];
 
-    if ([self.selectedItems containsObject:lifestyle]) {
-        [self.selectedItems removeObject:lifestyle];
-    } else {
-        [self.selectedItems addObject:lifestyle];
-    }
+    [self.viewModel toggleLifestyle:lifestyle];
 
     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 
@@ -98,14 +74,7 @@
 }
 
 - (void)notifyDelegate {
-    NSMutableArray<NSDictionary *> *lifestyles = [NSMutableArray array];
-
-    for (NSString *item in self.selectedItems) {
-        [lifestyles addObject:@{
-            @"name": item,
-            @"detail": [NSNull null]
-        }];
-    }
+    NSArray<NSDictionary *> *lifestyles = [self.viewModel getSelectedLifestyles];
 
     if ([self.delegate respondsToSelector:@selector(lifestyleSelectionViewController:didSelectLifestyles:)]) {
         [self.delegate lifestyleSelectionViewController:self didSelectLifestyles:lifestyles];
