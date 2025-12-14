@@ -53,11 +53,6 @@ class LifestyleDetailViewController: UIViewController {
         return table
     }()
 
-    private let doneButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -74,12 +69,10 @@ class LifestyleDetailViewController: UIViewController {
 
         headerLabel.applyTitleStyle()
         subtitleLabel.applySecondaryStyle()
-        doneButton.applyPrimaryStyle()
 
         view.addSubview(headerLabel)
         view.addSubview(subtitleLabel)
         view.addSubview(tableView)
-        view.addSubview(doneButton)
 
         NSLayoutConstraint.activate([
             headerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: AppTheme.Spacing.md),
@@ -93,12 +86,7 @@ class LifestyleDetailViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: AppTheme.Spacing.md),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -AppTheme.Spacing.md),
-
-            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: AppTheme.Spacing.xl),
-            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -AppTheme.Spacing.xl),
-            doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -AppTheme.Spacing.md),
-            doneButton.heightAnchor.constraint(equalToConstant: 54)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -AppTheme.Spacing.md)
         ])
     }
 
@@ -111,8 +99,6 @@ class LifestyleDetailViewController: UIViewController {
     }
 
     private func setupActions() {
-        doneButton.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
-
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
@@ -121,16 +107,8 @@ class LifestyleDetailViewController: UIViewController {
     private func configureContent() {
         headerLabel.text = viewModel.headerText
         subtitleLabel.text = viewModel.subtitleText
-        doneButton.setTitle(viewModel.doneButtonTitle, for: .normal)
         viewModel.loadLifestyles(selectedLifestyles)
         tableView.reloadData()
-    }
-
-    @objc private func doneTapped() {
-        dismissKeyboard()
-
-        let updatedLifestyles = viewModel.getUpdatedLifestyles()
-        delegate?.lifestyleDetailViewController(self, didUpdateLifestyles: updatedLifestyles)
     }
 
     @objc private func dismissKeyboard() {
@@ -165,6 +143,8 @@ extension LifestyleDetailViewController: UITableViewDelegate {
 extension LifestyleDetailViewController: LifestyleDetailCellDelegate {
     func lifestyleDetailCell(_ cell: LifestyleDetailCell, didUpdateDetail detail: String, forLifestyle lifestyle: String) {
         viewModel.updateDetail(forLifestyleNamed: lifestyle, detail: detail)
+        
+        let updatedLifestyles = viewModel.getUpdatedLifestyles()
+        delegate?.lifestyleDetailViewController(self, didUpdateLifestyles: updatedLifestyles)
     }
 }
-

@@ -13,7 +13,6 @@ protocol LifestyleDetailViewModelProtocol {
     var lifestyleDetails: [LifestyleItem] { get set }
     var headerText: String { get }
     var subtitleText: String { get }
-    var doneButtonTitle: String { get }
 
     func loadLifestyles(_ lifestyles: [LifestyleItem])
     func updateDetail(forLifestyleNamed name: String, detail: String)
@@ -33,10 +32,6 @@ final class LifestyleDetailViewModel: LifestyleDetailViewModelProtocol {
 
     var subtitleText: String {
         return "Add notes to your selected lifestyles (optional)"
-    }
-
-    var doneButtonTitle: String {
-        return "Done"
     }
 
     weak var delegate: LifestyleDetailDelegate?
@@ -62,4 +57,3 @@ final class LifestyleDetailViewModel: LifestyleDetailViewModelProtocol {
         return lifestyleDetails
     }
 }
-
