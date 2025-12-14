@@ -12,24 +12,22 @@ struct OnboardingContainerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            viewModel.cancelOnboarding()
-                        }) {
-                            Text("Cancel")
-                                .font(.subheadline)
-                                .foregroundColor(.red)
-                                .padding(.trailing, 16)
-                        }
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        viewModel.cancelOnboarding()
+                    }) {
+                        Text("Cancel")
+                            .font(.subheadline)
+                            .foregroundColor(.red)
+                            .padding(.trailing, 16)
                     }
-                    ProgressView(value: viewModel.progress)
-                        .tint(.pink)
                 }
-                .padding()
+                ProgressView(value: viewModel.progress)
+                    .tint(.pink)
             }
+            .padding()
             Spacer()
             
 

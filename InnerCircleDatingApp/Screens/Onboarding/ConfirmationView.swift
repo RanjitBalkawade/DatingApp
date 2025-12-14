@@ -31,6 +31,10 @@ struct ConfirmationView: View {
                     if let job = viewModel.user.job {
                         InfoCard(title: "Job", value: job, icon: "briefcase.fill")
                     }
+                    
+                    if let birthday = viewModel.user.birthday {
+                        InfoCard(title: "Birthday", value: birthday.formattedLong, icon: "calendar")
+                    }
 
                     if let height = viewModel.user.height {
                         InfoCard(title: "Height", value: "\(height) cm", icon: "ruler.fill")
@@ -172,6 +176,17 @@ struct InfoCard: View {
     }
 }
 
+
+extension Date {
+    var formattedLong: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter.string(from: self)
+    }
+}
+
 #Preview {
     ConfirmationView(viewModel: OnboardingViewModel(email: "preview@test.com", coordinator: nil))
 }
+

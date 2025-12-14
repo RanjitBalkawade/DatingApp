@@ -46,10 +46,10 @@ final class OnboardingViewModel: ObservableObject {
     @Published var submissionState: ViewState<User> = .idle
     @ObservedObject var user: User
 
-    weak var coordinator: OnboardingCoordinator?
+    weak var coordinator: OnboardingCoordinatorActions?
     private var cancellables = Set<AnyCancellable>()
 
-    init(email: String, coordinator: OnboardingCoordinator? = nil) {
+    init(email: String, coordinator: OnboardingCoordinatorActions? = nil) {
         self.user = User(email: email)
         self.coordinator = coordinator
 
